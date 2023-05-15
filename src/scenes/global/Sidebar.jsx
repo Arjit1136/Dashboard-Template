@@ -1,25 +1,163 @@
-import { useState } from "react";
-import {ProSidebar,Menu,MenuItem} from 'react-pro-sidebar';
-import 'react-pro-sidebar/dist/css/styles.css';
-import {Box,IconButton,Typography,useTheme} from '@mui/material';
-import {Link} from 'react-router-dom';
-import { tokens } from "../../theme";
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
-import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined'
-import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined'
-import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined'
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
-import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined'
-import PieChartOutlineOutlinedIcon from '@mui/icons-material/PieChartOutlineOutlined'
-import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined'
-import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined'
-import MapOutlinedIcon from '@mui/icons-material/MapOutlined'
-const Sidebar = () => {
-    return <><div>
-        Sidebar
-    </div>
-    </>
+import { useState } from 'react'
+
+import {
+  Sidebar as ProSidebar,
+  Menu,
+  MenuItem,
+  useProSidebar,
+  sidebarClasses,
+  menuClasses,
+} from 'react-pro-sidebar'
+
+import {
+  Box,
+  IconButton,
+  menuItemClasses,
+  Typography,
+  Divider,
+  useTheme,
+} from '@mui/material'
+import { Link } from 'react-router-dom'
+import {
+  HomeOutlined,
+  CalendarTodayOutlined,
+  NotesOutlined,
+  SettingsOutlined,
+  MenuOutlined,
+} from '@mui/icons-material'
+import { tokens } from '../../theme'
+
+const Item = ({ title, to, icon, selected, setSelected }) => {
+  const theme = useTheme()
+  const colors = tokens(theme.palette.mode)
+
+  return (
+    <Link to={to}>
+      <MenuItem
+        active={selected === title}
+        style={{
+          color: colors.grey[100],
+          backgroundColor: 'transparent',
+          padding: '10px 0px 10px 0px',
+        }}
+        onClick={() => setSelected(title)}
+        icon={icon}
+        component="div"
+      >
+        <Typography>{title}</Typography>
+      </MenuItem>
+    </Link>
+  )
 }
-export default Sidebar;
+
+const Sidebar = () => {
+  const theme = useTheme()
+  const colors = tokens(theme.palette.mode)
+
+  const { collapseSidebar, collapsed, toggleSidebar } = useProSidebar()
+
+  const [selected, setSelected] = useState('Dashboard')
+
+  return (
+    <Box>
+      <ProSidebar
+        defaultCollapsed={false}
+        rootStyles={{
+          [`.${sidebarClasses.container}`]: {
+            background: `${colors.primary[400]} !important`,
+            height: '100vh',
+          },
+          [`& .${menuClasses.root}`]: {
+            padding: '5px 25px 5px 20px !important',
+          },
+          [`& .${menuClasses.active}`]: {
+            color: '#6870fa !important',
+          },
+          [`.${menuItemClasses.root}:hover`]: {
+            color: '#000000 !important',
+          },
+        }}
+      >
+        <Menu iconShape="square">
+          <MenuItem
+            onClick={() => collapseSidebar()}
+            icon={collapsed ? <MenuOutlined /> : undefined}
+            style={{
+              margin: '10px 0 20px 0',
+              color: colors.grey[100],
+              backgroundColor: 'transparent',
+              padding: '10px 0px 10px 0px',
+            }}
+          >
+            {!collapsed && (
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                ml="15px"
+              >
+                <Typography variant="h3" sx={{ color: colors.grey[100] }}>
+                  {/* {APP} */}
+                </Typography>
+                <IconButton type="button" onClick={() => toggleSidebar()}>
+                  <MenuOutlined />
+                </IconButton>
+              </Box>
+            )}
+          </MenuItem>
+
+          <Box>
+            <Item
+              title="Dashboard"
+              to="/"
+              icon={<HomeOutlined />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Divider>
+              {!collapsed && (
+                <Typography variant="h6" color={colors.grey[300]}>
+                  Tools
+                </Typography>
+              )}
+            </Divider>
+
+            <Item
+              title="Calender"
+              to="/calender"
+              icon={<CalendarTodayOutlined />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Notes"
+              to="/notes"
+              icon={<NotesOutlined />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Divider>
+              {!collapsed && (
+                <Typography variant="h6" color={colors.grey[300]}>
+                  Settings
+                </Typography>
+              )}
+            </Divider>
+
+            <Item
+              title="Settings"
+              to="/settings"
+              icon={<SettingsOutlined />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          </Box>
+        </Menu>
+      </ProSidebar>
+    </Box>
+  )
+}
+
+export default Sidebar
